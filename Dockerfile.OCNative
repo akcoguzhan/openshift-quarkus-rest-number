@@ -1,0 +1,10 @@
+FROM registry.redhat.io/quarkus/mandrel-20-rhel8:20.3 AS builder
+WORKDIR /buildnumber/
+COPY . /buildnumber/
+RUN ./mvnw clean package -Pnative
+
+FROM quay.io/quarkus/quarkus-micro-image:1.0
+WORKDIR /work/
+COPY --from=builder /buildnumber/target/*-runner /work/application
+RUN chmod 1001 /work/application
+CMD ["./application", "-Dquarkus.http.host=0.0.0.0"]
