@@ -1,0 +1,48 @@
+image:
+  name: quarkus-helm-rest-number
+  tag: latest
+build:
+  jvm:
+    imageStreamTag:
+      name: 'java:11'
+      namespace: openshift
+      useReleaseNamespace: false
+  native:
+    dockerfilePath: ./OCNative
+    useDefaultDockerfile: false
+  output:
+    kind: ImageStreamTag
+  enabled: true
+  mode: native
+  ref: main
+  uri: 'https://github.com/Devarque/openshift-quarkus-rest-number.git'
+deploy:
+  ports:
+    - name: http
+      port: 5061
+      protocol: TCP
+      targetPort: 5061
+  route:
+    tls:
+      enabled: true
+      insecureEdgeTerminationPolicy: Redirect
+      termination: edge
+    enabled: true
+    targetPort: http
+  livenessProbe:
+    tcpSocket:
+      port: http
+  readinessProbe:
+    httpGet:
+      path: /
+      port: http
+  applicationProperties:
+    enabled: true
+    mountPath: /deployments/config/
+    properties: >-
+      quarkus.http.port=5061
+      quarkus.container-image.builder=openshift
+      quarkus.openshift.route.expose=true
+      quarkus.kubernetes-client.trust-certs=true
+  replicas: 1
+  serviceType: ClusterIP

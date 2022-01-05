@@ -1,7 +1,7 @@
 FROM quay.io/quarkus/ubi-quarkus-native-s2i:21.3-java11 AS builder
 WORKDIR /build/
 COPY . /build/
-RUN ./mvnw clean package -Pnative
+RUN ./mvnw package -Pnative
 
 FROM registry.redhat.io/ubi8/ubi-minimal
 WORKDIR /deployments/
