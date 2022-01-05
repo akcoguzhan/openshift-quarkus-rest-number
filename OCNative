@@ -1,7 +1,7 @@
-FROM quay.io/quarkus/ubi-quarkus-mandrel:21.3.0.0-Final-java11 AS builder
+FROM registry.redhat.io/quarkus/mandrel-20-rhel8 AS builder
 WORKDIR /build/
 COPY . /build/
-RUN ./mvnw package -Pnative -Dquarkus.native.container-build=true
+RUN ./mvnw clean package -Pnative
 
 FROM registry.redhat.io/ubi8/ubi-minimal
 WORKDIR /deployments/
